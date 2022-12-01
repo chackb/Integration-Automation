@@ -1,0 +1,21 @@
+BROKER SCHEMA UDP_Properties
+
+
+CREATE COMPUTE MODULE getUDPProperties_Compute1
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- CALL CopyMessageHeaders();
+		CALL CopyEntireMessage();
+		IF intCache.flag = 'N' THEN
+			SET intCache.UDPValues = Environment.XMLNSC.UDPValues;
+			SET intCache.flag = 'Y';
+		END IF;	
+		SET Environment.Variables.UDPValues = intCache.UDPValues;
+		RETURN TRUE;
+	END;
+
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;

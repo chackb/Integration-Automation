@@ -1,0 +1,21 @@
+BROKER SCHEMA UDP_Properties
+
+DECLARE intCache SHARED ROW;
+
+CREATE COMPUTE MODULE getUDPProperties_Compute
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		CALL CopyEntireMessage();
+		IF intCache.flag = 'Y' THEN
+			PROPAGATE TO TERMINAL 'out';
+		ELSE
+			SET intCache.flag = 'N';
+			PROPAGATE TO TERMINAL 'out1';
+		END IF;		
+		RETURN FALSE;
+	END;
+	
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;

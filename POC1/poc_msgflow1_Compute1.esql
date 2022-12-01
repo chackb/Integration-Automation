@@ -1,0 +1,34 @@
+
+
+CREATE COMPUTE MODULE poc_msgflow1_Compute1
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- CALL CopyMessageHeaders();
+		-- CALL CopyEntireMessage();
+		CREATE FIELD OutputRoot.XMLNSC.GetAcctDetails;
+		DECLARE outRef REFERENCE TO OutputRoot.XMLNSC.GetAcctDetails;
+		SET outRef.AcctHolderName = InputRoot.JSON.Data.acctHolderName;
+		SET outRef.AcctNo = InputRoot.JSON.Data.acctNo;
+		SET outRef.address1 = InputRoot.JSON.Data.addrLine1;
+		SET outRef.address2 = InputRoot.JSON.Data.addrLine2;
+		SET outRef.city = InputRoot.JSON.Data.city;
+		SET outRef.state = InputRoot.JSON.Data.state;
+		SET outRef.mpin = Environment.JSON.Data.mpin;
+		SET outRef.bankCode = Environment.JSON.Data.backCode;
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;
